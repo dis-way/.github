@@ -75,10 +75,6 @@ jobs:
           build_kustomize() {
             local path="$1"
             local output_file="$2"
-            if [ ! -d "$path" ]; then
-              touch "$output_file"
-              return
-            fi
             if command -v kustomize >/dev/null 2>&1; then
               kustomize build "$path" > "$output_file"
               return
@@ -96,6 +92,13 @@ jobs:
             pattern="${pattern// /}"
             for dir in $pattern; do
               output_name="${dir//\//-}"
+              # Dir doesn't exist on base (new path added in PR): create empty placeholder
+              if [ ! -d "$dir" ]; then
+                touch "kustomize-output/${output_name}.yaml"
+                continue
+              fi
+              # Dir exists but has no kustomization.yaml: skip (same as PR build)
+              [ -f "${dir}/kustomization.yaml" ] || continue
               build_kustomize "$dir" "kustomize-output/${output_name}.yaml"
             done
           done
