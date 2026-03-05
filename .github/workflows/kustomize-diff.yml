@@ -45,6 +45,7 @@ jobs:
           for pattern in "${PATTERNS[@]}"; do
             pattern="${pattern// /}"
             for dir in $pattern; do
+              [ "$(basename "$dir")" = "base" ] && continue
               [ -f "${dir}/kustomization.yaml" ] || continue
               output_name="${dir//\//-}"
               build_kustomize "$dir" "kustomize-output/${output_name}.yaml"
@@ -91,6 +92,7 @@ jobs:
           for pattern in "${PATTERNS[@]}"; do
             pattern="${pattern// /}"
             for dir in $pattern; do
+              [ "$(basename "$dir")" = "base" ] && continue
               output_name="${dir//\//-}"
               # Dir doesn't exist on base (new path added in PR): create empty placeholder
               if [ ! -d "$dir" ]; then
