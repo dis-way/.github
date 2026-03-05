@@ -21,6 +21,8 @@ jobs:
         uses: actions/checkout@08eba0b27e820071cde6df949e0beb9ba4906955 # v4.3.0
 
       - name: Build kustomize
+        env:
+          BUILD_PATHS: ${{ inputs.build-paths }}
         shell: bash
         run: |
           set -euo pipefail
@@ -41,7 +43,7 @@ jobs:
             exit 1
           }
 
-          IFS=',' read -ra PATTERNS <<< "${{ inputs.build-paths }}"
+          IFS=',' read -ra PATTERNS <<< "$BUILD_PATHS"
           for pattern in "${PATTERNS[@]}"; do
             pattern="${pattern// /}"
             for dir in $pattern; do
@@ -68,6 +70,8 @@ jobs:
           ref: ${{ github.event.pull_request.base.ref }}
 
       - name: Build kustomize
+        env:
+          BUILD_PATHS: ${{ inputs.build-paths }}
         shell: bash
         run: |
           set -euo pipefail
@@ -88,7 +92,7 @@ jobs:
             exit 1
           }
 
-          IFS=',' read -ra PATTERNS <<< "${{ inputs.build-paths }}"
+          IFS=',' read -ra PATTERNS <<< "$BUILD_PATHS"
           for pattern in "${PATTERNS[@]}"; do
             pattern="${pattern// /}"
             for dir in $pattern; do
